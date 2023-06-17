@@ -70,12 +70,14 @@ def compress_image(request):
                 filename = image.name
                 image_type = image.content_type
                 image_format = "JPEG" if filename.split(
-                    '.')[1] == "jpg" or "jpeg" else filename.split('.')[1].upper()
+                    '.')[1] == "jpg" or filename.split(
+                    '.')[1] == "jpeg" else filename.split('.')[1].upper()
                 # print(image_format)
                 #
                 # if img.mode in ("RGBA", "P"):
                 #     img.convert("RGB")
                 img = Image.open(image)
+                img = img.convert('RGB')
                 output_buffer = io.BytesIO()
                 img.save(output_buffer, format=image_format,
                          quality=int(quality))
@@ -114,7 +116,6 @@ def convert_image(request):
         }, status=500)
 
     target_format = request.POST.get('target_format')
-    print(target_format)
     data = []
     if (target_format is None):
         return JsonResponse({
@@ -133,6 +134,7 @@ def convert_image(request):
         filename = filename.split('.')[0]
         new_filename = (f'{filename}.{target_format.lower()}')
         img = Image.open(image)
+        img = img.convert('RGB')
 
         output_buffer = io.BytesIO()
         img.save(output_buffer, format=target_format)
